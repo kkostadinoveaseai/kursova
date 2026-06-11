@@ -65,11 +65,11 @@ docker compose down -v
 Образът на уеб услугата е публикуван на Docker Hub:
 
 ```
-docker pull <your-dockerhub-username>/notes-web
+docker pull kristiankostadinov14/notes-web
 ```
 
 За да изградите и публикувате образа ръчно:
 ```bash
-docker build -t <your-dockerhub-username>/notes-web .
-docker push <your-dockerhub-username>/notes-web
+docker build -t kristiankostadinov14/notes-web .
+docker push kristiankostadinov14/notes-web
 ```
