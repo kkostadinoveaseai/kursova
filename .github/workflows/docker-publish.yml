@@ -22,4 +22,5 @@ jobs:
         with:
           context: .
           push: true
+          provenance: false
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/notes-web:latest
