@@ -3,123 +3,262 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Бележки</title>
+  <title>Калкулатор</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
+      background: #1a1a2e;
       min-height: 100vh;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
       padding: 40px 16px;
+      font-family: 'Segoe UI', sans-serif;
+      gap: 24px;
+      flex-wrap: wrap;
     }
-    .container {
-      width: 100%;
-      max-width: 600px;
+
+    /* CALCULATOR */
+    .calc {
+      background: #16213e;
+      border-radius: 20px;
+      padding: 24px;
+      width: 320px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
-    h1 {
-      font-size: 1.8rem;
-      color: #1a202c;
-      margin-bottom: 24px;
+    .display {
+      background: #0f3460;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      text-align: right;
     }
-    .add-form {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
-    .add-form input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #cbd5e0;
-      border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-      background: white;
-    }
-    .add-form input:focus {
-      border-color: #4299e1;
-      box-shadow: 0 0 0 3px rgba(66,153,225,0.2);
-    }
-    .add-form button {
-      padding: 10px 20px;
-      background: #4299e1;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .add-form button:hover { background: #3182ce; }
-    .error {
-      background: #fff5f5;
-      border: 1px solid #fc8181;
-      color: #c53030;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 24px;
-      font-size: 0.9rem;
-    }
-    .empty {
-      text-align: center;
+    .display .expr {
       color: #a0aec0;
-      margin-top: 40px;
-      font-size: 1rem;
+      font-size: 0.85rem;
+      min-height: 20px;
+      word-break: break-all;
     }
-    .note-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .note-item {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 14px 16px;
+    .display .result {
+      color: #e2e8f0;
+      font-size: 2.2rem;
+      font-weight: 300;
+      word-break: break-all;
+      min-height: 48px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content: flex-end;
     }
-    .note-text { flex: 1; color: #2d3748; word-break: break-word; }
-    .note-meta { font-size: 0.75rem; color: #a0aec0; white-space: nowrap; }
-    .delete-btn {
-      background: none;
+    .result.error { color: #fc8181; font-size: 1.2rem; }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
       border: none;
-      color: #fc8181;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      padding: 18px 0;
       cursor: pointer;
-      font-size: 1.2rem;
-      line-height: 1;
-      padding: 2px 6px;
-      border-radius: 4px;
+      transition: opacity 0.1s, transform 0.1s;
+      font-weight: 500;
     }
-    .delete-btn:hover { background: #fff5f5; }
+    button:active { opacity: 0.7; transform: scale(0.96); }
+
+    .btn-num  { background: #1a1a2e; color: #e2e8f0; }
+    .btn-op   { background: #0f3460; color: #63b3ed; }
+    .btn-eq   { background: #e94560; color: white; }
+    .btn-clr  { background: #2d3748; color: #fc8181; }
+    .btn-wide { grid-column: span 2; }
+
+    /* HISTORY */
+    .history {
+      background: #16213e;
+      border-radius: 20px;
+      padding: 24px;
+      width: 280px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      max-height: 560px;
+      display: flex;
+      flex-direction: column;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .history h2 { color: #e2e8f0; font-size: 1rem; font-weight: 600; }
+    .clear-btn {
+      background: none;
+      border: 1px solid #4a5568;
+      color: #a0aec0;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .clear-btn:active { opacity: 0.6; transform: none; }
+    .history-list {
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-item {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .history-item:hover { background: #0f3460; }
+    .history-item .h-expr { color: #718096; font-size: 0.8rem; }
+    .history-item .h-result { color: #e2e8f0; font-size: 1.1rem; font-weight: 500; }
+    .history-item .h-time { color: #4a5568; font-size: 0.7rem; margin-top: 2px; }
+    .no-history { color: #4a5568; text-align: center; margin-top: 20px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Моите бележки</h1>
 
-    {% if error %}
-      <div class="error">Грешка при свързване с базата данни: {{ error }}</div>
-    {% endif %}
+  <div class="calc">
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="result">0</div>
+    </div>
+    <div class="buttons">
+      <button class="btn-clr" onclick="clearAll()">AC</button>
+      <button class="btn-clr" onclick="deleteLast()">⌫</button>
+      <button class="btn-op"  onclick="input('%')">%</button>
+      <button class="btn-op"  onclick="input('/')">÷</button>
 
-    <form class="add-form" action="/add" method="POST">
-      <input type="text" name="content" placeholder="Напишете бележка..." maxlength="500" required />
-      <button type="submit">Добави</button>
-    </form>
+      <button class="btn-num" onclick="input('7')">7</button>
+      <button class="btn-num" onclick="input('8')">8</button>
+      <button class="btn-num" onclick="input('9')">9</button>
+      <button class="btn-op"  onclick="input('*')">×</button>
 
-    {% if notes %}
-      <ul class="note-list">
-        {% for note in notes %}
-          <li class="note-item">
-            <span class="note-text">{{ note[1] }}</span>
-            <span class="note-meta">{{ note[2].strftime('%d.%m %H:%M') if note[2] else '' }}</span>
-            <form action="/delete/{{ note[0] }}" method="POST">
-              <button class="delete-btn" type="submit" title="Изтрий">&#x2715;</button>
-            </form>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="empty">Няма бележки все още.</p>
-    {% endif %}
+      <button class="btn-num" onclick="input('4')">4</button>
+      <button class="btn-num" onclick="input('5')">5</button>
+      <button class="btn-num" onclick="input('6')">6</button>
+      <button class="btn-op"  onclick="input('-')">−</button>
+
+      <button class="btn-num" onclick="input('1')">1</button>
+      <button class="btn-num" onclick="input('2')">2</button>
+      <button class="btn-num" onclick="input('3')">3</button>
+      <button class="btn-op"  onclick="input('+')">+</button>
+
+      <button class="btn-num btn-wide" onclick="input('0')">0</button>
+      <button class="btn-num" onclick="input('.')">.</button>
+      <button class="btn-eq"  onclick="calculate()">=</button>
+    </div>
   </div>
+
+  <div class="history">
+    <div class="history-header">
+      <h2>История</h2>
+      <button class="clear-btn" onclick="clearHistory()">Изчисти</button>
+    </div>
+    <div class="history-list" id="historyList">
+      {% if history %}
+        {% for item in history %}
+          <div class="history-item" onclick="useResult('{{ item[1] }}')">
+            <div class="h-expr">{{ item[0] }}</div>
+            <div class="h-result">= {{ item[1] }}</div>
+            <div class="h-time">{{ item[2].strftime('%d.%m %H:%M') if item[2] else '' }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="no-history" id="noHistory">Няма история</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    let expr = '';
+    let justCalculated = false;
+
+    function input(val) {
+      if (justCalculated && '0123456789.'.includes(val)) {
+        expr = '';
+      }
+      justCalculated = false;
+      expr += val;
+      document.getElementById('expr').textContent = expr.replace(/\*/g,'×').replace(/\//g,'÷');
+      document.getElementById('result').className = 'result';
+      document.getElementById('result').textContent = expr || '0';
+    }
+
+    function clearAll() {
+      expr = '';
+      document.getElementById('expr').textContent = '';
+      document.getElementById('result').className = 'result';
+      document.getElementById('result').textContent = '0';
+      justCalculated = false;
+    }
+
+    function deleteLast() {
+      expr = expr.slice(0, -1);
+      document.getElementById('result').textContent = expr || '0';
+      document.getElementById('expr').textContent = expr.replace(/\*/g,'×').replace(/\//g,'÷');
+    }
+
+    function useResult(val) {
+      expr = val;
+      document.getElementById('result').textContent = val;
+      document.getElementById('expr').textContent = '';
+      justCalculated = false;
+    }
+
+    async function calculate() {
+      if (!expr) return;
+      const displayExpr = expr.replace(/\*/g,'×').replace(/\//g,'÷');
+      document.getElementById('expr').textContent = displayExpr + ' =';
+      const res = await fetch('/calculate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({expression: expr})
+      });
+      const data = await res.json();
+      const resultEl = document.getElementById('result');
+      if (data.error) {
+        resultEl.className = 'result error';
+        resultEl.textContent = data.error;
+      } else {
+        resultEl.className = 'result';
+        resultEl.textContent = data.result;
+        expr = data.result;
+        justCalculated = true;
+        addToHistory(displayExpr, data.result);
+      }
+    }
+
+    function addToHistory(expression, result) {
+      const list = document.getElementById('historyList');
+      const noHist = document.getElementById('noHistory');
+      if (noHist) noHist.remove();
+      const now = new Date();
+      const time = now.toLocaleDateString('bg-BG', {day:'2-digit', month:'2-digit'}) + ' ' +
+                   now.toLocaleTimeString('bg-BG', {hour:'2-digit', minute:'2-digit'});
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `<div class="h-expr">${expression}</div><div class="h-result">= ${result}</div><div class="h-time">${time}</div>`;
+      item.onclick = () => useResult(result);
+      list.insertBefore(item, list.firstChild);
+    }
+
+    async function clearHistory() {
+      await fetch('/history/clear', {method: 'POST'});
+      document.getElementById('historyList').innerHTML = '<div class="no-history" id="noHistory">Няма история</div>';
+    }
+
+    document.addEventListener('keydown', e => {
+      if ('0123456789+-/*.'.includes(e.key)) input(e.key);
+      else if (e.key === 'Enter' || e.key === '=') calculate();
+      else if (e.key === 'Backspace') deleteLast();
+      else if (e.key === 'Escape') clearAll();
+    });
+  </script>
 </body>
 </html>
